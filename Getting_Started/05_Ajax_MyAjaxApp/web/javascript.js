@@ -24,7 +24,7 @@ function clearTable(){
     if (completeTable.getElementsByTagName("tr").length > 0){
         completeTable.style.display = 'none';
         for (loop = completeTable.childNodes.length -1; loop >= 0; loop--){
-            completeTable.removeChild(completeTable.childNodes(loop));
+            completeTable.removeChild(completeTable.childNodes[loop]);
         }
     }
 }
@@ -33,7 +33,7 @@ function init(){
     completeField = document.getElementById("complete-field");
     completeTable = document.getElementById("complete-table");
     autoRow = document.getElementById("auto-row");
-    completeTable.style = getElementY(autorow) + "px";
+    completeTable.style = getElementY(autoRow) + "px";
 }
 
 function callback(){
