@@ -42,9 +42,9 @@ a:hover {
 }
 
 .popupBox {
-    position: absolute;
     top: 170px;
     left: 140px;
+    display: none;
 }
 
 .popupCell {
