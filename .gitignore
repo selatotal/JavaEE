@@ -1,5 +1,8 @@
 # Created by https://www.gitignore.io
 
+### MAC ###
+.DS_Store
+
 ### Java ###
 *.class
 
@@ -59,3 +62,4 @@ local.properties
 
 
 /Getting_Started/02_HelloWeb/nbproject/private/
+/Getting_Started/04_JSF2/nbproject/private/
