@@ -49,8 +49,17 @@ body {
 
 #footer {
     height: 60px;
+    width: 350px;
     clear: left;
     background: #aaa;
+}
+
+hr {
+    border: 0;
+    background-color: #333;
+    height: 1px;
+    margin: 0 25px;
+    width: 300px;
 }
 
 #indexLeftColumn {
@@ -65,4 +74,17 @@ body {
     width: 500px;
     float: left;
     background: #eee;
+}
+
+.categoryBox {
+    height: 176px;
+    width: 212px;
+    margin: 21px 14px 6px;
+    float: inherit;
+    background: #ccc;
+}
+
+.categoryLabelText {
+    line-height: 150%;
+    font-size: x-large;
 }
