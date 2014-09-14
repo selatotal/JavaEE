@@ -7,8 +7,24 @@
     </head>
     <body>
         <div id="main">
+
             <div id="header">
-                header
+                
+                <div id="widgetBar">
+                    <div class="headerWidget">
+                        [language toogle]
+                    </div>
+                    
+                    <div class="headerWidget">
+                        [shopping cart widget]
+                    </div>
+                </div>
+                
+                <a href="#">
+                    <img src="#" id="logo" alt="Affable Bean Logo" />
+                </a>
+                
+                <img src="#" id="logoText" alt="the affable bean" />
             </div>
             
             <div id="indexLeftColumn">
