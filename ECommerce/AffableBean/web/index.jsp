@@ -15,6 +15,8 @@
                         [language toogle]
                     </div>
                     
+                    <div class="headerWidget"></div>
+                    
                     <div class="headerWidget">
                         [shopping cart widget]
                     </div>
