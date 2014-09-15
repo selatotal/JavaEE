@@ -5,8 +5,11 @@
  */
 package controller;
 
+import entity.Category;
+import entity.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -58,7 +61,22 @@ public class ControllerServlet extends HttpServlet {
         
      
         if (userPath.equals("/category")){  // if category page is requested
-            // TODO: Implement category request
+            // get category from request
+            String categoryId = request.getQueryString();
+            
+            if (categoryId != null){
+                // get selected category
+                Category selectedCategory = this.categoryFacade.find(Short.parseShort(categoryId));
+                
+                // place selected category in request scope
+                request.setAttribute("selectedCategory", selectedCategory);
+                
+                // get all products for selected category
+                Collection<Product> categoryProducts = selectedCategory.getProductCollection();
+                
+                // place category products in request scope
+                request.setAttribute("categoryProducts", categoryProducts);
+            }
         } else if (userPath.equals("/viewCart")){ // if cart page is requested
             // TODO: Implement cart request
             userPath = "/cart";
