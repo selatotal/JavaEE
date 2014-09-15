@@ -5,7 +5,6 @@
     <properties>
         <property name="eclipselink.logging.level" value="FINEST" />
     </properties>
-    <exclude-unlisted-classes>false</exclude-unlisted-classes>
-    <properties/>
+    <!--<exclude-unlisted-classes>false</exclude-unlisted-classes>-->
   </persistence-unit>
 </persistence>
