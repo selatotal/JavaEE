@@ -65,3 +65,7 @@ local.properties
 /Getting_Started/04_JSF2/nbproject/private/
 /Getting_Started/05_Ajax_MyAjaxApp/nbproject/private/
 /ECommerce/AffableBean/nbproject/private/
+/MavenEnterpriseApp/MavenEnterpriseApp-ejb/target/
+/MavenEnterpriseApp/MavenEnterpriseApp-web/target/
+/MavenEnterpriseApp/MavenEnterpriseApp-ear/target/
+/Maven/DVDStoreAdmin/target/
