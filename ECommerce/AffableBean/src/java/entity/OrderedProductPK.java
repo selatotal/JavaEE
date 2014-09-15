@@ -1,45 +1,42 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package entity;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author talesviegas
+ * @author tgiunipero
  */
 @Embeddable
 public class OrderedProductPK implements Serializable {
     @Basic(optional = false)
-    @NotNull
-    @Column(name = "cusumer_order_id")
-    private int cusumerOrderId;
+    @Column(name = "customer_order_id")
+    private int customerOrderId;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "product_id")
     private int productId;
 
     public OrderedProductPK() {
     }
 
-    public OrderedProductPK(int cusumerOrderId, int productId) {
-        this.cusumerOrderId = cusumerOrderId;
+    public OrderedProductPK(int customerOrderId, int productId) {
+        this.customerOrderId = customerOrderId;
         this.productId = productId;
     }
 
-    public int getCusumerOrderId() {
-        return cusumerOrderId;
+    public int getCustomerOrderId() {
+        return customerOrderId;
     }
 
-    public void setCusumerOrderId(int cusumerOrderId) {
-        this.cusumerOrderId = cusumerOrderId;
+    public void setCustomerOrderId(int customerOrderId) {
+        this.customerOrderId = customerOrderId;
     }
 
     public int getProductId() {
@@ -53,7 +50,7 @@ public class OrderedProductPK implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (int) cusumerOrderId;
+        hash += (int) customerOrderId;
         hash += (int) productId;
         return hash;
     }
@@ -65,7 +62,7 @@ public class OrderedProductPK implements Serializable {
             return false;
         }
         OrderedProductPK other = (OrderedProductPK) object;
-        if (this.cusumerOrderId != other.cusumerOrderId) {
+        if (this.customerOrderId != other.customerOrderId) {
             return false;
         }
         if (this.productId != other.productId) {
@@ -76,7 +73,7 @@ public class OrderedProductPK implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.OrderedProductPK[ cusumerOrderId=" + cusumerOrderId + ", productId=" + productId + " ]";
+        return "entity.OrderedProductPK[customerOrderId=" + customerOrderId + ", productId=" + productId + "]";
     }
-    
+
 }

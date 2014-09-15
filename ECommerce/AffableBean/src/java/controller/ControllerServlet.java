@@ -1,53 +1,62 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package controller;
 
+import cart.ShoppingCart;
 import entity.Category;
 import entity.Product;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Collection;
 import javax.ejb.EJB;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import session.CategoryFacade;
+import session.ProductFacade;
 
 /**
  *
- * @author talesviegas
+ * @author tgiunipero
  */
-@WebServlet(name = "ControllerServlet", 
-        loadOnStartup = 1,
-        urlPatterns = {
-            "/category", 
-            "/addToCart", 
-            "/viewCart",
-            "/updateCart",
-            "/checkout",
-            "/purchase",
-            "/chooseLanguage"
-        })
+@WebServlet(name = "Controller",
+            loadOnStartup = 1,
+            urlPatterns = {"/category",
+                           "/addToCart",
+                           "/viewCart",
+                           "/updateCart",
+                           "/checkout",
+                           "/purchase",
+                           "/chooseLanguage"})
 public class ControllerServlet extends HttpServlet {
+
+    private String surcharge;
 
     @EJB
     private CategoryFacade categoryFacade;
+    @EJB
+    private ProductFacade productFacade;
 
     @Override
-    public void init() throws ServletException{
-        
-        // Store category list in servlet context
-        getServletContext().setAttribute("categories", this.categoryFacade.findAll());
+    public void init(ServletConfig servletConfig) throws ServletException {
+
+        super.init(servletConfig);
+
+        // initialize servlet with configuration information
+        surcharge = servletConfig.getServletContext().getInitParameter("deliverySurcharge");
+
+        // store category list in servlet context
+        getServletContext().setAttribute("categories", categoryFacade.findAll());
     }
-    
+
     /**
      * Handles the HTTP <code>GET</code> method.
-     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -56,47 +65,78 @@ public class ControllerServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String userPath = request.getServletPath();
-        
-     
-        if (userPath.equals("/category")){  // if category page is requested
-            // get category from request
+        HttpSession session = request.getSession();
+        Category selectedCategory;
+        Collection<Product> categoryProducts;
+
+        // if category page is requested
+        if (userPath.equals("/category")) {
+
+            // get categoryId from request
             String categoryId = request.getQueryString();
-            
-            if (categoryId != null){
+
+            if (categoryId != null) {
+
                 // get selected category
-                Category selectedCategory = this.categoryFacade.find(Short.parseShort(categoryId));
-                
-                // place selected category in request scope
-                request.setAttribute("selectedCategory", selectedCategory);
-                
+                selectedCategory = categoryFacade.find(Short.parseShort(categoryId));
+
+                // place selected category in session scope
+                session.setAttribute("selectedCategory", selectedCategory);
+
                 // get all products for selected category
-                Collection<Product> categoryProducts = selectedCategory.getProductCollection();
-                
-                // place category products in request scope
-                request.setAttribute("categoryProducts", categoryProducts);
+                categoryProducts = selectedCategory.getProductCollection();
+
+                // place category products in session scope
+                session.setAttribute("categoryProducts", categoryProducts);
             }
-        } else if (userPath.equals("/viewCart")){ // if cart page is requested
-            // TODO: Implement cart request
+
+
+        // if cart page is requested
+        } else if (userPath.equals("/viewCart")) {
+
+            String clear = request.getParameter("clear");
+
+            if ((clear != null) && clear.equals("true")) {
+
+                ShoppingCart cart = (ShoppingCart) session.getAttribute("cart");
+                cart.clear();
+            }
+
             userPath = "/cart";
-        } else if (userPath.equals("/checkout")){ // if checkout page is requested
-            // TODO: Implement checkout page request
-        } else if (userPath.equals("/changeLanguage")){ // if user switches language
+
+
+        // if checkout page is requested
+        } else if (userPath.equals("/checkout")) {
+
+            ShoppingCart cart = (ShoppingCart) session.getAttribute("cart");
+
+            // calculate total
+            cart.calculateTotal(surcharge);
+
+            // forward to checkout page and switch to a secure channel
+
+
+        // if user switches language
+        } else if (userPath.equals("/chooseLanguage")) {
             // TODO: Implement language request
+
         }
-        
-        // User request dispatcher to forward request internally
+
+        // use RequestDispatcher to forward request internally
         String url = "/WEB-INF/view" + userPath + ".jsp";
-        
-        request.getRequestDispatcher(url).forward(request, response);
-                
-        
+
+        try {
+            request.getRequestDispatcher(url).forward(request, response);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
+
 
     /**
      * Handles the HTTP <code>POST</code> method.
-     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -105,24 +145,62 @@ public class ControllerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-     
+
         String userPath = request.getServletPath();
-        
-        if (userPath.equals("/addToCart")){ // if add to cart action is called
-            // TODO: Implement add product to cart action
-        } else if (userPath.equals("/updateCart")){ // if update cart is called
-            // TODO: Implement update cart action            
-        } else if (userPath.equals("/purchase")){ // if purchase action is called
+        HttpSession session = request.getSession();
+        ShoppingCart cart = (ShoppingCart) session.getAttribute("cart");
+
+        // if addToCart action is called
+        if (userPath.equals("/addToCart")) {
+
+            // if user is adding item to cart for first time
+            // create cart object and attach it to user session
+            if (cart == null) {
+
+                cart = new ShoppingCart();
+                session.setAttribute("cart", cart);
+            }
+
+            // get user input from request
+            String productId = request.getParameter("productId");
+
+            if (!productId.isEmpty()) {
+
+                Product product = productFacade.find(Integer.parseInt(productId));
+                cart.addItem(product);
+            }
+
+            userPath = "/category";
+
+
+        // if updateCart action is called
+        } else if (userPath.equals("/updateCart")) {
+
+            // get input from request
+            String productId = request.getParameter("productId");
+            String quantity = request.getParameter("quantity");
+
+            Product product = productFacade.find(Integer.parseInt(productId));
+            cart.update(product, quantity);
+
+            userPath = "/cart";
+
+
+        // if purchase action is called
+        } else if (userPath.equals("/purchase")) {
             // TODO: Implement purchase action
+
             userPath = "/confirmation";
         }
-        
-        // Use request dispatcher to forward request internally
-        String url = "/WEB-INF/view" + userPath + ".jsp";
-        
-        request.getRequestDispatcher(url).forward(request, response);
-                
-    }
 
+        // use RequestDispatcher to forward request internally
+        String url = "/WEB-INF/view" + userPath + ".jsp";
+
+        try {
+            request.getRequestDispatcher(url).forward(request, response);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
 }
